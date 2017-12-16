@@ -4,6 +4,8 @@ import (
     "fmt"
     "math/rand"
     "time"
+    "os"
+    "strconv"
 )
 
 
@@ -36,8 +38,8 @@ func shuffle(list []int) []int {
 }
 
 
-func bogosort(list []int) {
-    fmt.Println("Begin boGo!\n------------------")
+func bogosort(list []int) int{
+    fmt.Println("\n# # # # # # # #\nBegin boGo!\n------------------")
     fmt.Println("Initial list:")
     fmt.Println(list)
     fmt.Println("------------------")
@@ -48,6 +50,17 @@ func bogosort(list []int) {
         permutations += 1
     }
     fmt.Printf("Sorting finished in %d permutations\n", permutations)
+    return permutations
+}
+
+
+//Build_list returns a randomly shuffled list of numbers from 1 to len
+func build_list(len int)[]int {
+    list := make([]int, len)
+    for i := 0; i < len; i++ {
+        list[i] = i + 1
+    }
+    return shuffle(list)
 }
 
 
@@ -56,7 +69,24 @@ func bogosort(list []int) {
 //      shuffle(deck)
 func main() {
     rand.Seed(time.Now().UTC().UnixNano())
-    list := []int{2, 5, 1, 4, 3}
-    bogosort(list)
+    var i int64
+    if len(os.Args) < 3 {
+        fmt.Println("Need [list length] [iterations]")
+        return
+    }
+    length,_ := strconv.ParseInt(os.Args[1], 10, 64)
+    iterations,_ := strconv.ParseInt(os.Args[2], 10, 64)
+    if iterations < 1 || iterations < 1 {
+        fmt.Println("Need plausible values")
+    }
+
+    results := make([]int, iterations)
+    total := 0
+    for i = 0; i < iterations; i++ {
+        list := build_list(int(length))
+        results[i] = bogosort(list)
+        total += results[i]
+    }
+    fmt.Printf("Average over %d iterations: %f\n", iterations, float64(total) / float64(iterations))
 }
 
