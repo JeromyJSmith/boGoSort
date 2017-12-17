@@ -37,20 +37,18 @@ func shuffle(list []int) []int {
     return list
 }
 
-
-func bogosort(list []int) int{
-    fmt.Println("\n# # # # # # # #\nBegin boGo!\n------------------")
-    fmt.Println("Initial list:")
-    fmt.Println(list)
-    fmt.Println("------------------")
+// trade time.Duration for float64
+func bogosort(list []int) (int, float64) {
     permutations := 0
 
+    t0 := time.Now()
     for ! check_sorted(list) {
         list = shuffle(list)
         permutations += 1
     }
-    fmt.Printf("Sorting finished in %d permutations\n", permutations)
-    return permutations
+    t1 := time.Now()
+    duration := t1.Sub(t0)
+    return permutations, duration.Seconds()
 }
 
 
@@ -80,13 +78,26 @@ func main() {
         fmt.Println("Need plausible values")
     }
 
+    fmt.Println("\n# # # # # # # #\nBegin boGo!\n------------------")
     results := make([]int, iterations)
-    total := 0
+    total_permutations := 0
+    total_time := 0.0
+    var duration float64 // time.Duration
     for i = 0; i < iterations; i++ {
         list := build_list(int(length))
-        results[i] = bogosort(list)
-        total += results[i]
+        fmt.Printf("\nIteration: #%d\n", i+1)
+        fmt.Println("Initial list:")
+        fmt.Println(list)
+        fmt.Println("------------------")
+        results[i], duration = bogosort(list)
+        total_permutations += results[i]
+        total_time += duration
+        fmt.Printf("Sorting finished in %d permutations\n", results[i])
+        fmt.Printf("Duration: %fs\n", duration)
+
     }
-    fmt.Printf("Average over %d iterations: %f\n", iterations, float64(total) / float64(iterations))
+    fmt.Printf("\n\nAverage over %d iterations: %.2f and %fs\n", iterations,
+                                                        float64(total_permutations) / float64(iterations),
+                                                        total_time / float64(iterations))
 }
 
