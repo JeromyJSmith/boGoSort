@@ -8,7 +8,9 @@ from badsorts import common
 ITERATIONS = config.iterations
 MAX_LIST_LENGTH = config.length
 BIN_NAME = config.bin_name
-CHART_NAME = BIN_NAME + "_iter-" + str(ITERATIONS) + "_len-" + str(MAX_LIST_LENGTH) + ".png"
+CHART_NAME = (
+    f"{BIN_NAME}_iter-{str(ITERATIONS)}_len-{str(MAX_LIST_LENGTH)}.png"
+)
 
 
 # Chart of x (list length) by y (time taken on average)
@@ -20,10 +22,10 @@ def save_chart(go_times, py_times, list_lengths):
     plt.plot(xpy, ypy, linestyle="--", c="r", label="Python")
     plt.plot(xgo, ygo, linestyle="--", c="b", label="Go")
     plt.legend()
-    plt.title("Python vs Go " + BIN_NAME)
+    plt.title(f"Python vs Go {BIN_NAME}")
 
     plt.xlabel("List Length")
-    plt.ylabel("Avg. Run Duration over %s Iterations (s)" % ITERATIONS)
+    plt.ylabel(f"Avg. Run Duration over {ITERATIONS} Iterations (s)")
 
     plt.savefig(CHART_NAME)
 
@@ -38,7 +40,7 @@ def build_list(length):
 def run_python(iterations, list_length):
     total_time = 0
     total_perms = 0
-    for i in range(1, iterations + 1):
+    for _ in range(1, iterations + 1):
         rand_list = build_list(list_length)
         duration, permutations = bogosort.run(rand_list)
         total_time += duration.total_seconds()
@@ -49,7 +51,7 @@ def run_python(iterations, list_length):
 
 # Return averages from one run in go as strings
 def run_go_binary(iterations, list_length):
-    cmd = ["../" + BIN_NAME, str(list_length), str(iterations)]
+    cmd = [f"../{BIN_NAME}", str(list_length), str(iterations)]
     output = subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode("utf-8")
 
     # -2 since split gives an extra empty line

@@ -2,10 +2,7 @@ import random
 
 def sorted(ints):
     length = len(ints)
-    for i in range(0, length-1):
-        if ints[i] > ints[i+1]:
-            return False
-    return True
+    return all(ints[i] <= ints[i+1] for i in range(0, length-1))
 
 
 # Uses the Fisher-Yates Algorithm
